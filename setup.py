@@ -10,7 +10,7 @@ setup(
     author_email = "warner-fxa-python-client@lothar.com",
     url = "https://github.com/mozilla/fxa-python-client",
     packages = ["fxa_client"],
-    scripts = ["bin/fxa-client"],
+    scripts = ["bin/fxa-client", "bin/fxa-vectors"],
     classifiers=[
         "Programming Language :: Python",
         "Programming Language :: Python :: 2",
