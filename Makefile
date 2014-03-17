@@ -13,8 +13,11 @@ help: .help-deps
 	@echo "  ./ve/bin/fxa-client change-password EMAIL@restmail.net pw newpw"
 	@echo " forgot-password:"
 	@echo "  ./ve/bin/fxa-client forgotpw-send EMAIL@restmail.net"
+	@echo "  then for restmail.net accounts, use:"
+	@echo "  ./ve/bin/fxa-client get-token-code EMAIL@restmail.net"
 	@echo "  ./ve/bin/fxa-client forgotpw-resend EMAIL@restmail.net token"
 	@echo "  ./ve/bin/fxa-client forgotpw-submit EMAIL@restmail.net token code newerpw"
+
 	@echo " destroy-account:"
 	@echo "  ./ve/bin/fxa-client destroy EMAIL@restmail.net newerpw"
 

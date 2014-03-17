@@ -275,7 +275,7 @@ def main():
     elif command == "forgotpw-submit":
         emailUTF8,passwordForgotToken_hex,code,newPasswordUTF8 = sys.argv[2:6]
         passwordForgotToken = passwordForgotToken_hex.decode("hex")
-    elif command == "verify":
+    elif command in ("verify", "get-token-code"):
         emailUTF8 = sys.argv[2]
     else:
         raise NotImplementedError("unknown command '%s'" % command)
@@ -315,6 +315,12 @@ def main():
         r = verifyUrl(verify_url)
         assert r.code == 200
         print 'Verified Acct'
+        return
+
+    if command == "get-token-code":
+        forgot_url = getRestmailVerifyUrl(os.path.join(RESTMAILURL, emailUTF8))
+        token_code = urlparse.parse_qs(urlparse.urlparse(forgot_url).query)
+        print token_code['token'][0], token_code['code'][0]
         return
 
     assert command in ("create", "login", "login-with-keys", "destroy",
