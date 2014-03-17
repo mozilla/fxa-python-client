@@ -55,8 +55,8 @@ def xor(s1, s2):
     return b"".join([int2byte(ord(s1[i:i+1])^ord(s2[i:i+1])) for i in range(len(s1))])
 
 #BASEURL = "http://127.0.0.1:9000/"
-BASEURL = "https://api-accounts-onepw.dev.lcip.org/"
 #BASEURL = "https://api-accounts-latest.dev.lcip.org/"
+BASEURL = "https://api.accounts.firefox.com/"
 
 HOST = urlparse.urlparse(BASEURL)[1]
 
