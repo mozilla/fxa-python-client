@@ -15,6 +15,13 @@ from fxa_client.hkdf import HKDF
 # than about 88k.
 from fxa_client.pbkdf2 import pbkdf2_bin
 
+RESTMAILURL = "http://restmail.net/mail/"
+BASEURL = "https://api.accounts.firefox.com/"
+if os.getenv("PUBLIC_URL"):
+    BASEURL = os.getenv("PUBLIC_URL")
+
+HOST = urlparse.urlparse(BASEURL)[1]
+
 def makeRandom():
     return os.urandom(32)
 
@@ -58,7 +65,7 @@ def getRestmailVerifyUrl(url):
     restmail_str = urllib2.urlopen(url).read()
     restmail_dict = json.loads(restmail_str)
     assert len(restmail_dict)
-    return restmail_dict[0]['headers']['x-link']
+    return restmail_dict[-1]['headers']['x-link']
 
 def verifyUrl(url):
     qs = urlparse.urlparse(url).query
@@ -69,12 +76,6 @@ def verifyUrl(url):
                           data)
     return urllib2.urlopen(req)
 
-RESTMAILURL = "http://restmail.net/mail/"
-#BASEURL = "http://127.0.0.1:9000/"
-#BASEURL = "https://api-accounts-latest.dev.lcip.org/"
-BASEURL = "https://api.accounts.firefox.com/"
-
-HOST = urlparse.urlparse(BASEURL)[1]
 
 class WebError(Exception):
     def __init__(self, r):
@@ -274,7 +275,7 @@ def main():
     elif command == "forgotpw-submit":
         emailUTF8,passwordForgotToken_hex,code,newPasswordUTF8 = sys.argv[2:6]
         passwordForgotToken = passwordForgotToken_hex.decode("hex")
-    elif command == "verify":
+    elif command in ("verify", "get-token-code"):
         emailUTF8 = sys.argv[2]
     else:
         raise NotImplementedError("unknown command '%s'" % command)
@@ -314,6 +315,12 @@ def main():
         r = verifyUrl(verify_url)
         assert r.code == 200
         print 'Verified Acct'
+        return
+
+    if command == "get-token-code":
+        forgot_url = getRestmailVerifyUrl(os.path.join(RESTMAILURL, emailUTF8))
+        token_code = urlparse.parse_qs(urlparse.urlparse(forgot_url).query)
+        print token_code['token'][0], token_code['code'][0]
         return
 
     assert command in ("create", "login", "login-with-keys", "destroy",
