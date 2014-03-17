@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import os, sys, json, base64, urlparse
+import os, sys, json, base64, urlparse, urllib, urllib2
 import requests
 from hashlib import sha256
 import hmac
@@ -54,6 +54,22 @@ def xor(s1, s2):
     assert len(s1) == len(s2)
     return b"".join([int2byte(ord(s1[i:i+1])^ord(s2[i:i+1])) for i in range(len(s1))])
 
+def getRestmailVerifyUrl(url):
+    restmail_str = urllib2.urlopen(url).read()
+    restmail_dict = json.loads(restmail_str)
+    assert len(restmail_dict)
+    return restmail_dict[0]['headers']['x-link']
+
+def verifyUrl(url):
+    qs = urlparse.urlparse(url).query
+    qs_dict = urlparse.parse_qs(qs)
+
+    data = urllib.urlencode({"uid":qs_dict['uid'][0], "code":qs_dict['code'][0]})
+    req = urllib2.Request(os.path.join(BASEURL, "v1/recovery_email/verify_code"),
+                          data)
+    return urllib2.urlopen(req)
+
+RESTMAILURL = "http://restmail.net/mail/"
 #BASEURL = "http://127.0.0.1:9000/"
 #BASEURL = "https://api-accounts-latest.dev.lcip.org/"
 BASEURL = "https://api.accounts.firefox.com/"
@@ -258,6 +274,8 @@ def main():
     elif command == "forgotpw-submit":
         emailUTF8,passwordForgotToken_hex,code,newPasswordUTF8 = sys.argv[2:6]
         passwordForgotToken = passwordForgotToken_hex.decode("hex")
+    elif command == "verify":
+        emailUTF8 = sys.argv[2]
     else:
         raise NotImplementedError("unknown command '%s'" % command)
 
@@ -290,6 +308,14 @@ def main():
         assert r == {}, r
         return
 
+    if command == "verify":
+        verify_url = getRestmailVerifyUrl(os.path.join(RESTMAILURL, emailUTF8))
+        print 'Verify URL: ', verify_url
+        r = verifyUrl(verify_url)
+        assert r.code == 200
+        print 'Verified Acct'
+        return
+
     assert command in ("create", "login", "login-with-keys", "destroy",
                        "change-password")
 
@@ -302,6 +328,7 @@ def main():
                   })
         print r
         print "Now use the 'curl' command from the server logs to verify"
+        print "Or if you used restmail.net use the verify command"
         return
 
     if command == "destroy":

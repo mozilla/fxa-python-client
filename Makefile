@@ -1,20 +1,22 @@
 
 help: .help-deps
 	@echo "FxA account creation:"
-	@echo " ./ve/bin/fxa-client create email@example.org pw"
-	@echo "  (and click verification email link)"
+	@echo " ./ve/bin/fxa-client create EMAIL@restmail.net pw"
+	@echo "  then for restmail.net accounts, use:"
+	@echo "   ./ve/bin/fxa-client verify EMAIL@restmail.net"
+	@echo "  or for non-restmail account, extract and load verification URL from server logs"
 	@echo
 	@echo "FxA account usage:"
-	@echo "  ./ve/bin/fxa-client login email@example.org pw"
-	@echo "  ./ve/bin/fxa-client login-with-keys email@example.org pw"
+	@echo "  ./ve/bin/fxa-client login EMAIL@restmail.net pw"
+	@echo "  ./ve/bin/fxa-client login-with-keys EMAIL@restmail.net pw"
 	@echo " change-password:"
-	@echo "  ./ve/bin/fxa-client change-password email@example.org pw newpw"
+	@echo "  ./ve/bin/fxa-client change-password EMAIL@restmail.net pw newpw"
 	@echo " forgot-password:"
-	@echo "  ./ve/bin/fxa-client forgotpw-send email@example.org"
-	@echo "  ./ve/bin/fxa-client forgotpw-resend email@example.org token"
-	@echo "  ./ve/bin/fxa-client forgotpw-submit email@example.org token code newerpw"
+	@echo "  ./ve/bin/fxa-client forgotpw-send EMAIL@restmail.net"
+	@echo "  ./ve/bin/fxa-client forgotpw-resend EMAIL@restmail.net token"
+	@echo "  ./ve/bin/fxa-client forgotpw-submit EMAIL@restmail.net token code newerpw"
 	@echo " destroy-account:"
-	@echo "  ./ve/bin/fxa-client destroy email@example.org newerpw"
+	@echo "  ./ve/bin/fxa-client destroy EMAIL@restmail.net newerpw"
 
 ve:
 	virtualenv ve
