@@ -1,12 +1,13 @@
 #!/usr/bin/env python
 
 import os, sys, urlparse
-from fxa_client import (GET, printhex, binary_type, POST, resendForgotPassword,
-                        stretch, verifyForgotPassword, HKDF, KW, split,
-                        HAWK_POST, getRestmailVerifyUrl, RESTMAILURL,
-                        verifyUrl, changePassword, getEmailStatus,
-                        fetchKeys, signCertificate, dumpCert, HOST,
-                        destroySession, WebError)
+from fxa_client.fxa_crypto import (
+    GET, printhex, binary_type, POST, resendForgotPassword,
+    stretch, verifyForgotPassword, HKDF, KW, split,
+    HAWK_POST, getRestmailVerifyUrl, RESTMAILURL,
+    verifyUrl, changePassword, getEmailStatus,
+    fetchKeys, signCertificate, dumpCert, HOST,
+    destroySession, WebError)
 
 def main():
     GET("__heartbeat__", versioned="")
