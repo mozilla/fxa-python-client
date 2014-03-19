@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import os, sys, urlparse
+import os, urlparse, argparse # argparse requires py2.7/py3.2
 from fxa_client.fxa_crypto import (
     GET, printhex, binary_type, POST, resendForgotPassword,
     stretch, verifyForgotPassword, HKDF, KW, split,
@@ -9,25 +9,33 @@ from fxa_client.fxa_crypto import (
     fetchKeys, signCertificate, dumpCert, HOST,
     destroySession, WebError)
 
-def main():
+def command(args):
     GET("__heartbeat__", versioned="")
-    command = sys.argv[1]
+    command = args.command
+
+    # emailUTF8 and passwordUTF8 are provided with --email and --password,
+    # but are not needed by all commands
     if command in ("create", "login", "login-with-keys", "destroy"):
-        emailUTF8, passwordUTF8 = sys.argv[2:4]
-        printhex("email", emailUTF8)
-        printhex("password", passwordUTF8)
+        assert emailUTF8
+        assert passwordUTF8
     elif command == "change-password":
-        emailUTF8, passwordUTF8, newPasswordUTF8 = sys.argv[2:5]
+        assert emailUTF8
+        assert passwordUTF8
+        newPasswordUTF8 = args.args[0]
+        printhex("newpassword", newPasswordUTF8)
     elif command == "forgotpw-send":
-        emailUTF8 = sys.argv[2]
+        assert emailUTF8
     elif command == "forgotpw-resend":
-        emailUTF8, passwordForgotToken_hex = sys.argv[2:4]
+        assert emailUTF8
+        passwordForgotToken_hex = args.args[0]
         passwordForgotToken = passwordForgotToken_hex.decode("hex")
     elif command == "forgotpw-submit":
-        emailUTF8,passwordForgotToken_hex,code,newPasswordUTF8 = sys.argv[2:6]
+        assert emailUTF8
+        # use --password to provide the new password
+        passwordForgotToken_hex,code = args.args
         passwordForgotToken = passwordForgotToken_hex.decode("hex")
     elif command in ("verify", "get-token-code"):
-        emailUTF8 = sys.argv[2]
+        pass
     else:
         raise NotImplementedError("unknown command '%s'" % command)
 
@@ -46,7 +54,7 @@ def main():
         return
 
     if command == "forgotpw-submit":
-        newAuthPW = stretch(emailUTF8, newPasswordUTF8)[0]
+        newAuthPW = stretch(emailUTF8, passwordUTF8)[0]
         accountResetToken = verifyForgotPassword(passwordForgotToken, code)
         x = HKDF(SKM=accountResetToken,
                  XTS=None,
@@ -98,7 +106,6 @@ def main():
         return
 
     if command == "change-password":
-        newPasswordUTF8 = sys.argv[4]
         return changePassword(emailUTF8, passwordUTF8, newPasswordUTF8)
 
     assert command in ("login", "login-with-keys")
@@ -147,8 +154,22 @@ def main():
         print "bad, session not destroyed"
         assert 0
 
+parser = argparse.ArgumentParser()
+parser.add_argument("-e", "--email", help="email address for the account")
+parser.add_argument("-p", "--password", help="login password")
+parser.add_argument("command", help="one of: create, login[-with-keys], destroy, change-password, forgotpw-send, forgotpw-resend, forgotpw-submit, verify, get-token-code")
+parser.add_argument("args", nargs=argparse.REMAINDER)
+args = parser.parse_args()
+
+emailUTF8 = args.email or "fxa-%s@restmail.net" % os.urandom(6).encode("hex")
+passwordUTF8 = args.password or os.urandom(2).encode("hex")
+
+if not args.email and not args.password:
+    print "To access this account later, use this command:"
+    print "fxa-client --email %s --password %s" % (emailUTF8, passwordUTF8)
+
 if __name__ == '__main__':
-    main()
+    command(args)
 
 # exercised:
 #  account/create

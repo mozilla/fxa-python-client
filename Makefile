@@ -1,25 +1,26 @@
 
 help: .help-deps
+	@echo "Root COMMAND=./ve/bin/fxa-client --email EMAIL@restmail.net --password pw"
 	@echo "FxA account creation:"
-	@echo " ./ve/bin/fxa-client create EMAIL@restmail.net pw"
+	@echo " $COMMAND create"
 	@echo "  then for restmail.net accounts, use:"
-	@echo "   ./ve/bin/fxa-client verify EMAIL@restmail.net"
+	@echo "   $COMMAND verify"
 	@echo "  or for non-restmail account, extract and load verification URL from server logs"
 	@echo
 	@echo "FxA account usage:"
-	@echo "  ./ve/bin/fxa-client login EMAIL@restmail.net pw"
-	@echo "  ./ve/bin/fxa-client login-with-keys EMAIL@restmail.net pw"
+	@echo "  $COMMAND login"
+	@echo "  $COMMAND login-with-keys"
 	@echo " change-password:"
-	@echo "  ./ve/bin/fxa-client change-password EMAIL@restmail.net pw newpw"
+	@echo "  $COMMAND change-password newpw"
 	@echo " forgot-password:"
-	@echo "  ./ve/bin/fxa-client forgotpw-send EMAIL@restmail.net"
-	@echo "  then for restmail.net accounts, use:"
-	@echo "  ./ve/bin/fxa-client get-token-code EMAIL@restmail.net"
-	@echo "  ./ve/bin/fxa-client forgotpw-resend EMAIL@restmail.net token"
-	@echo "  ./ve/bin/fxa-client forgotpw-submit EMAIL@restmail.net token code newerpw"
+	@echo "  $COMMAND forgotpw-send"
+	@echo "   then for restmail.net accounts, use:"
+	@echo "    $COMMAND get-token-code"
+	@echo "  $COMMAND forgotpw-resend token"
+	@echo "  $COMMAND forgotpw-submit token code newerpw"
 
 	@echo " destroy-account:"
-	@echo "  ./ve/bin/fxa-client destroy EMAIL@restmail.net newerpw"
+	@echo "  $COMMAND destroy"
 
 ve:
 	virtualenv ve
