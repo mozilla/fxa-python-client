@@ -1,0 +1,25 @@
+#!/usr/bin/env python
+
+import os, sys, json, urllib2
+
+BASEURL = "http://restmail.net/mail/"
+
+def getText(url):
+    restmail_str = urllib2.urlopen(url).read()
+    restmail_dict = json.loads(restmail_str)
+    if not restmail_dict:
+        print 'no mail'
+        sys.exit()
+    print restmail_dict[0]['headers']["content-language"]
+    print restmail_dict[0]['subject']
+    print restmail_dict[0]['text'].encode('utf8')
+    # DELETE Mail
+    req = urllib2.Request(url)
+    req.get_method = lambda: 'DELETE'
+    urllib2.urlopen(req)
+    print 'deleted email'
+
+# lang@restmail.net
+email = sys.argv[1] 
+getText(os.path.join(BASEURL,email))
+
