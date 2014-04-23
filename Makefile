@@ -17,7 +17,7 @@ help: .help-deps
 	@echo "   then for restmail.net accounts, use:"
 	@echo "    \$$COMMAND get-token-code"
 	@echo "  \$$COMMAND forgotpw-resend token"
-	@echo "  \$$COMMAND forgotpw-submit token code newerpw"
+	@echo "  \$$COMMAND forgotpw-submit token code"
 
 	@echo " destroy-account:"
 	@echo "  \$$COMMAND destroy"
