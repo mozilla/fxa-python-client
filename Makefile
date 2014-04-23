@@ -2,25 +2,25 @@
 help: .help-deps
 	@echo "Root COMMAND=./ve/bin/fxa-client --email EMAIL@restmail.net --password pw"
 	@echo "FxA account creation:"
-	@echo " $COMMAND create"
+	@echo " \$$COMMAND create"
 	@echo "  then for restmail.net accounts, use:"
-	@echo "   $COMMAND verify"
+	@echo "   \$$COMMAND verify"
 	@echo "  or for non-restmail account, extract and load verification URL from server logs"
 	@echo
 	@echo "FxA account usage:"
-	@echo "  $COMMAND login"
-	@echo "  $COMMAND login-with-keys"
+	@echo "  \$$COMMAND login"
+	@echo "  \$$COMMAND login-with-keys"
 	@echo " change-password:"
-	@echo "  $COMMAND change-password newpw"
+	@echo "  \$$COMMAND change-password newpw"
 	@echo " forgot-password:"
-	@echo "  $COMMAND forgotpw-send"
+	@echo "  \$$COMMAND forgotpw-send"
 	@echo "   then for restmail.net accounts, use:"
-	@echo "    $COMMAND get-token-code"
-	@echo "  $COMMAND forgotpw-resend token"
-	@echo "  $COMMAND forgotpw-submit token code newerpw"
+	@echo "    \$$COMMAND get-token-code"
+	@echo "  \$$COMMAND forgotpw-resend token"
+	@echo "  \$$COMMAND forgotpw-submit token code newerpw"
 
 	@echo " destroy-account:"
-	@echo "  $COMMAND destroy"
+	@echo "  \$$COMMAND destroy"
 
 ve:
 	virtualenv ve
