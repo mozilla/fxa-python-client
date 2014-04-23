@@ -18,24 +18,31 @@ def command(args):
     if command in ("create", "login", "login-with-keys", "destroy"):
         assert emailUTF8
         assert passwordUTF8
+        assert len(args.args) == 0
+        print "email='%s', password='%s'" % (emailUTF8, passwordUTF8)
     elif command == "change-password":
         assert emailUTF8
         assert passwordUTF8
+        assert len(args.args) == 1
         newPasswordUTF8 = args.args[0]
         printhex("newpassword", newPasswordUTF8)
     elif command == "forgotpw-send":
         assert emailUTF8
+        assert len(args.args) == 0
     elif command == "forgotpw-resend":
         assert emailUTF8
+        assert len(args.args) == 1
         passwordForgotToken_hex = args.args[0]
         passwordForgotToken = passwordForgotToken_hex.decode("hex")
     elif command == "forgotpw-submit":
         assert emailUTF8
         # use --password to provide the new password
+        assert passwordUTF8
+        assert len(args.args) == 2
         passwordForgotToken_hex,code = args.args
         passwordForgotToken = passwordForgotToken_hex.decode("hex")
     elif command in ("verify", "get-token-code"):
-        pass
+        assert len(args.args) == 0
     else:
         raise NotImplementedError("unknown command '%s'" % command)
 
