@@ -97,8 +97,9 @@ def command(args):
     if command == "create":
         r = POST("account/create",
                  {"email": emailUTF8,
-                  "authPW": authPW.encode("hex"),
-                  })
+                  "authPW": authPW.encode("hex")},
+                 {"accept-language": acceptLang}
+                 )
         print r
         print "Now use the 'curl' command from the server logs to verify"
         print "Or if you used restmail.net use the verify command"
@@ -164,12 +165,14 @@ def command(args):
 parser = argparse.ArgumentParser()
 parser.add_argument("-e", "--email", help="email address for the account")
 parser.add_argument("-p", "--password", help="login password")
+parser.add_argument("-l", "--lang", help="accept-language header value")
 parser.add_argument("command", help="one of: create, login[-with-keys], destroy, change-password, forgotpw-send, forgotpw-resend, forgotpw-submit, verify, get-token-code")
 parser.add_argument("args", nargs=argparse.REMAINDER)
 args = parser.parse_args()
 
 emailUTF8 = args.email or "fxa-%s@restmail.net" % os.urandom(6).encode("hex")
 passwordUTF8 = args.password or os.urandom(2).encode("hex")
+acceptLang = args.lang or "en-us"
 
 if not args.email and not args.password:
     print "To access this account later, use this command:"

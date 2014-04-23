@@ -96,11 +96,13 @@ def GET(api, versioned="v1/"):
         raise WebError(r)
     return r.json()
 
-def POST(api, body={}, versioned="v1/"):
+def POST(api, body={}, new_headers={}, versioned="v1/"):
     url = BASEURL+versioned+api
-    print "POST", url
+    headers = {"content-type": "application/json"}
+    headers.update(new_headers)
+    print "POST", url, headers
     r = requests.post(url,
-                      headers={"content-type": "application/json"},
+                      headers=headers,
                       data=json.dumps(body))
     if r.status_code != 200:
         raise WebError(r)
