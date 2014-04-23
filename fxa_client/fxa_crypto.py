@@ -19,8 +19,14 @@ RESTMAILURL = "http://restmail.net/mail/"
 BASEURL = "https://api.accounts.firefox.com/"
 if os.getenv("PUBLIC_URL"):
     BASEURL = os.getenv("PUBLIC_URL")
+    assert BASEURL.endswith("/")
 
 HOST = urlparse.urlparse(BASEURL)[1]
+if HOST.split(":")[0] == "localhost":
+    # HAWK includes the hostname in the HMAC'ed request string, and
+    # fxa-auth-server listens on "127.0.0.1". If we connect with "localhost",
+    # the request will make it there, but the HMAC won't match.
+    raise ValueError("use '127.0.0.1', not 'localhost'")
 
 def makeRandom():
     return os.urandom(32)
