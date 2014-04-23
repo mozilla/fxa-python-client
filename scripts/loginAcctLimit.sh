@@ -4,31 +4,31 @@ declare -i PRELIMIT
 DELAYLIMIT=20
 PRELIMIT=$1-$DELAYLIMIT
 export COMMAND="./ve/bin/fxa-client --email $EMAIL"
-$COMMAND create --password 12345678
+$COMMAND --password 12345678 create
 sleep 3
-$COMMAND verify --password 12345678
+$COMMAND --password 12345678 verify
 sleep 3
-$COMMAND login --password 87654321
-$COMMAND login --password 87654321
-$COMMAND login --password 87654321
-$COMMAND login --password 87654321
-$COMMAND login --password 87654321
-$COMMAND login --password 87654321
-$COMMAND login --password 87654321
-$COMMAND login --password 87654321
-$COMMAND login --password 87654321
-$COMMAND login --password 87654321
-$COMMAND login --password 87654321
+$COMMAND --password 87654321 login
+$COMMAND --password 87654321 login
+$COMMAND --password 87654321 login
+$COMMAND --password 87654321 login
+$COMMAND --password 87654321 login
+$COMMAND --password 87654321 login
+$COMMAND --password 87654321 login
+$COMMAND --password 87654321 login
+$COMMAND --password 87654321 login
+$COMMAND --password 87654321 login
+$COMMAND --password 87654321 login
 echo '>>>>>>>>Expect Fail'
-$COMMAND login --password 12345678
+$COMMAND --password 12345678 login
 echo '>>>>>>>>sleep '$PRELIMIT' seconds'
 sleep $PRELIMIT
 echo '>>>>>>>>Expect Fail'
-$COMMAND login --password 12345678
+$COMMAND --password 12345678 login 
 echo '>>>>>>>>sleep '$DELAYLIMIT' seconds'
 sleep $DELAYLIMIT
 echo '>>>>>>>>Expect Fail'
-$COMMAND login --password 87654321
+$COMMAND --password 87654321 login
 echo '>>>>>>>>Expect Success'
-$COMMAND login --password 12345678
-$COMMAND destroy --password 12345678
+$COMMAND --password 12345678 login
+$COMMAND --password 12345678 destroy
