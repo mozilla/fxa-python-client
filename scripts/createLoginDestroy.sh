@@ -1,5 +1,5 @@
 #!/bin/sh
-export PUBLIC_URL=https://api.accounts.firefox.com/
+export PUBLIC_URL="https://api-accounts.stage.mozaws.net/"
 export COMMAND="./ve/bin/fxa-client --password 12345678"
 $COMMAND --email user-monitor@restmail.net create
 sleep 2

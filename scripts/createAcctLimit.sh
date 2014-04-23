@@ -1,4 +1,5 @@
 #!/bin/sh
+export PUBLIC_URL="https://api-accounts.stage.mozaws.net/"
 EMAIL=email-limit-$(date +%s)@restmail.net
 declare -i PRELIMIT
 DELAYLIMIT=10
