@@ -36,7 +36,7 @@ ve:
 .PHONY: deps
 deps: .deps
 
-install: ve
+install: ve .deps
 	ve/bin/python setup.py install
 
 vectors: .deps
