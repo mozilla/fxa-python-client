@@ -1,10 +1,13 @@
 #!/bin/sh
-export PUBLIC_URL="https://api-accounts.stage.mozaws.net/"
+
+: ${PUBLIC_URL:='https://api-accounts.stage.mozaws.net/'}
+export PUBLIC_URL
 EMAIL=login-limit-$(date +%s)@restmail.net
 declare -i PRELIMIT
 DELAYLIMIT=20
 PRELIMIT=$1-$DELAYLIMIT
 export COMMAND="./ve/bin/fxa-client --email $EMAIL"
+
 $COMMAND --password 12345678 create
 sleep 3
 $COMMAND --password 12345678 verify
