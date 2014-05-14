@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 
 import os, urlparse, argparse # argparse requires py2.7/py3.2
+from cryptography.hazmat.primitives.asymmetric import rsa
+from cryptography.hazmat.backends import openssl
+
 from fxa_client.fxa_crypto import (
     GET, printhex, binary_type, POST, resendForgotPassword,
     stretch, verifyForgotPassword, HKDF, KW, split,
@@ -138,11 +141,14 @@ def command(args):
         printhex("kB", kB)
 
     if email_status:
-        # exercise /certificate/sign . jwcrypto in the server demands that
-        # "n" be of a recognized length (512 bits is the shortest it likes)
-        pubkey = {"algorithm": "RS",
-                  "n": "%d" % (2**512), "e": "2"}
-        cert = signCertificate(sessionToken, pubkey, 24*3600*1000)
+        # exercise /certificate/sign with a real RSA public key. jwcrypto in
+        # the server demands that "n" be of a recognized length
+        privkey = rsa.RSAPrivateKey.generate(65537, 2048, openssl.backend)
+        pubkey = privkey.public_key()
+        pubkey_json = {"algorithm": "RS",
+                       "n": str(pubkey.modulus),
+                       "e": str(pubkey.public_exponent)}
+        cert = signCertificate(sessionToken, pubkey_json, 24*3600*1000)
         print "cert:", cert
         header, payload = dumpCert(cert)
         assert header["alg"] == "RS256"

@@ -33,6 +33,7 @@ ve:
 	ve/bin/pip install requests
 	ve/bin/pip install PyHawk
 	ve/bin/pip install argparse
+	ve/bin/pip install cryptography
 	touch .deps .help-deps
 .PHONY: deps
 deps: .deps
