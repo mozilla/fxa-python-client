@@ -1,6 +1,6 @@
 
 help: .help-deps
-	@echo "Root COMMAND=./ve/bin/fxa-client --email EMAIL@restmail.net --password pw"
+	@echo "COMMAND=./ve/bin/fxa-client --email EMAIL@restmail.net --password pw"
 	@echo "FxA account creation:"
 	@echo " \$$COMMAND create"
 	@echo "  then for restmail.net accounts, use:"
@@ -42,3 +42,7 @@ install: ve .deps
 
 vectors: .deps
 	ve/bin/python picl-crypto.py
+
+.PHONY: clean
+clean:
+	rm -rf ve .deps .help-deps
