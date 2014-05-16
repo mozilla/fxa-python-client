@@ -1,10 +1,15 @@
 #!/usr/bin/env python
 
-import os, sys, json, base64, urlparse, urllib, urllib2
+import os, json, base64, urlparse, urllib, urllib2, time
 import requests
+from pprint import pprint
 from hashlib import sha256
 import hmac
 import binascii
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives.asymmetric import rsa, padding
+from cryptography.hazmat.backends import openssl
+
 from . import six
 from .six import binary_type, print_, int2byte
 from .hkdf import HKDF
@@ -223,10 +228,19 @@ def changePassword(emailUTF8, oldPassword, newPassword):
     assert r == {}, r
     print "password changed"
 
+def createKeypair():
+    # returns a (privkey, pubkey) pair of cryptography.io objects
+    privkey = rsa.RSAPrivateKey.generate(65537, 2048, openssl.backend)
+    pubkey = privkey.public_key()
+    return (privkey, pubkey)
+
 def signCertificate(sessionToken, pubkey, duration):
+    pubkey_json = {"algorithm": "RS",
+                   "n": str(pubkey.modulus),
+                   "e": str(pubkey.public_exponent)}
     tokenID, reqHMACkey, requestKey = processSessionToken(sessionToken)
     resp = HAWK_POST("certificate/sign", tokenID, reqHMACkey,
-                     {"publicKey": pubkey, "duration": duration})
+                     {"publicKey": pubkey_json, "duration": duration})
     assert resp["err"] is None
     return str(resp["cert"])
 
@@ -238,9 +252,48 @@ def dumpCert(cert):
     pieces = cert.split(".")
     header = json.loads(b64parse(pieces[0]))
     payload = json.loads(b64parse(pieces[1]))
-    print "header:", header
-    print "payload:", payload
+    print "header:",; pprint(header)
+    print "payload:",; pprint(payload)
     return header, payload
+
+def createAssertion(privkey, audience, now=None, exp=None, duration=5*60):
+    now = now or time.time()
+    exp = exp or now + duration
+    def enc(a):
+        return base64.urlsafe_b64encode(a).rstrip("=")
+    header = json.dumps({"alg": "RS256"})
+    body = json.dumps({"exp": int(1000*exp),
+                       "aud": audience}).encode("utf-8")
+    assert isinstance(privkey, rsa.RSAPrivateKey)
+    assert privkey.key_size == 2048
+    s = privkey.signer(padding.PKCS1v15(),
+                       hashes.SHA256(),
+                       openssl.backend)
+    s.update(enc(header)+"."+enc(body))
+    sig = s.finalize()
+    return enc(header)+"."+enc(body)+"."+enc(sig)
+
+def createBackedAssertion(encoded_cert, privkey, audience,
+                          now=None, exp=None, duration=5*60):
+    assertion = createAssertion(privkey, audience, now, exp, duration)
+    return encoded_cert+"~"+assertion
+
+def verifyBackedAssertion(audience, assertion):
+    if True:
+        from browserid import LocalVerifier
+        v = LocalVerifier(["*"], warning=False)
+        print "local verification", v.verify(assertion)
+        return
+    else:
+        url = "https://verifier.accounts.firefox.com/v2"
+        headers = {"content-type": "application/json"}
+        r = requests.post(url,
+                          headers=headers,
+                          data=json.dumps({"audience": audience,
+                                           "assertion": assertion}))
+        if r.status_code != 200:
+            raise WebError(r)
+        return r.json()
 
 def destroySession(sessionToken):
     tokenID, reqHMACkey, requestKey = processSessionToken(sessionToken)

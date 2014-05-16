@@ -1,15 +1,14 @@
 #!/usr/bin/env python
 
 import os, urlparse, argparse # argparse requires py2.7/py3.2
-from cryptography.hazmat.primitives.asymmetric import rsa
-from cryptography.hazmat.backends import openssl
 
+from fxa_client import fxa_crypto
 from fxa_client.fxa_crypto import (
     GET, printhex, binary_type, POST, resendForgotPassword,
     stretch, verifyForgotPassword, HKDF, KW, split,
     HAWK_POST, getRestmailVerifyUrl, RESTMAILURL,
     verifyUrl, changePassword, getEmailStatus,
-    fetchKeys, signCertificate, dumpCert, HOST,
+    fetchKeys, createKeypair, signCertificate, dumpCert, HOST,
     destroySession, WebError)
 
 def command(args):
@@ -143,16 +142,17 @@ def command(args):
     if email_status:
         # exercise /certificate/sign with a real RSA public key. jwcrypto in
         # the server demands that "n" be of a recognized length
-        privkey = rsa.RSAPrivateKey.generate(65537, 2048, openssl.backend)
-        pubkey = privkey.public_key()
-        pubkey_json = {"algorithm": "RS",
-                       "n": str(pubkey.modulus),
-                       "e": str(pubkey.public_exponent)}
-        cert = signCertificate(sessionToken, pubkey_json, 24*3600*1000)
+        privkey, pubkey = createKeypair()
+        cert = signCertificate(sessionToken, pubkey, 24*3600*1000)
         print "cert:", cert
         header, payload = dumpCert(cert)
         assert header["alg"] == "RS256"
         assert payload["principal"]["email"] == "%s@%s" % (uid, HOST)
+        audience = "http://example.org"
+        a = fxa_crypto.createBackedAssertion(cert, privkey, audience)
+        print "backed assertion:", a
+        res = fxa_crypto.verifyBackedAssertion(audience, a)
+        print "verified:", res
     # exercise /session/destroy
     print "destroying session now"
     print destroySession(sessionToken)

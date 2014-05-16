@@ -34,6 +34,7 @@ ve:
 	ve/bin/pip install PyHawk
 	ve/bin/pip install argparse
 	ve/bin/pip install cryptography
+	ve/bin/pip install PyBrowserID
 	touch .deps .help-deps
 .PHONY: deps
 deps: .deps
