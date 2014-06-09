@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import os, urlparse, argparse # argparse requires py2.7/py3.2
-
+import time
 from fxa_client import fxa_crypto
 from fxa_client.fxa_crypto import (
     GET, printhex, binary_type, POST, resendForgotPassword,
@@ -143,9 +143,13 @@ def command(args):
         # exercise /certificate/sign with a real RSA public key. jwcrypto in
         # the server demands that "n" be of a recognized length
         privkey, pubkey = createKeypair()
+        # the server limits duration to <= 1 day
         cert = signCertificate(sessionToken, pubkey, 24*3600*1000)
         print "cert:", cert
         header, payload = dumpCert(cert)
+        duration = payload["exp"]/1000.0 - time.time()
+        print "expires in: %ds (%.1f hours, %.2f days)" % (
+            duration, duration/3600, duration/86400)
         assert header["alg"] == "RS256"
         assert payload["principal"]["email"] == "%s@%s" % (uid, HOST)
         audience = "http://example.org"
