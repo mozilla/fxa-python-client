@@ -11,6 +11,9 @@ from fxa_client.fxa_crypto import (
     fetchKeys, createKeypair, signCertificate, dumpCert, HOST,
     destroySession, WebError)
 
+class UnknownCommand(Exception):
+    pass
+
 def command(args):
     GET("__heartbeat__", versioned="")
     command = args.command
@@ -46,7 +49,7 @@ def command(args):
     elif command in ("verify", "get-token-code"):
         assert len(args.args) == 0
     else:
-        raise NotImplementedError("unknown command '%s'" % command)
+        raise UnknownCommand("unknown command '%s'" % command)
 
     assert isinstance(emailUTF8, binary_type)
 
@@ -176,20 +179,42 @@ parser = argparse.ArgumentParser()
 parser.add_argument("-e", "--email", help="email address for the account")
 parser.add_argument("-p", "--password", help="login password")
 parser.add_argument("-l", "--lang", help="accept-language header value")
-parser.add_argument("command", help="one of: create, login[-with-keys], destroy, change-password, forgotpw-send, forgotpw-resend, forgotpw-submit, verify, get-token-code")
+parser.add_argument("command", help="one of: repl, create, login[-with-keys], destroy, change-password, forgotpw-send, forgotpw-resend, forgotpw-submit, verify, get-token-code")
 parser.add_argument("args", nargs=argparse.REMAINDER)
-args = parser.parse_args()
-
-emailUTF8 = args.email or "fxa-%s@restmail.net" % os.urandom(6).encode("hex")
-passwordUTF8 = args.password or os.urandom(2).encode("hex")
-acceptLang = args.lang or "en-us"
-
-if not args.email and not args.password:
-    print "To access this account later, use this command:"
-    print "fxa-client --email %s --password %s" % (emailUTF8, passwordUTF8)
 
 if __name__ == '__main__':
-    command(args)
+    args = parser.parse_args()
+    emailUTF8 = args.email or "fxa-%s@restmail.net" % os.urandom(6).encode("hex")
+    passwordUTF8 = args.password or os.urandom(2).encode("hex")
+    acceptLang = args.lang or "en-us"
+
+    if not args.email and not args.password:
+        print "To access this account later, use this command:"
+        print "fxa-client --email %s --password %s" % (emailUTF8, passwordUTF8)
+
+    if args.command == "repl":
+        linep = argparse.ArgumentParser()
+        linep.add_argument("command", help="one of: quit, create, login[-with-keys], destroy, change-password, forgotpw-send, forgotpw-resend, forgotpw-submit, verify, get-token-code")
+        linep.add_argument("args", nargs=argparse.REMAINDER)
+        while True:
+            try:
+                line = raw_input("fxa> ")
+            except EOFError:
+                print
+                break
+            if line:
+                args = linep.parse_args(line.split())
+                if args.command == "quit":
+                    break
+                try:
+                    command(args)
+                except UnknownCommand as e:
+                    print e
+                    linep.print_help()
+        print "To access this account later, use this command:"
+        print "fxa-client --email %s --password %s" % (emailUTF8, passwordUTF8)
+    else:
+        command(args)
 
 # exercised:
 #  account/create
