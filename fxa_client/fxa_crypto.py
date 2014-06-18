@@ -93,16 +93,18 @@ class WebError(Exception):
         self.r = r
         self.args = (r, r.content)
 
-def GET(api, versioned="v1/"):
-    url = BASEURL+versioned+api
+def GET(url):
     print "GET", url
     r = requests.get(url)
     if r.status_code != 200:
         raise WebError(r)
     return r.json()
 
-def POST(api, body={}, new_headers={}, versioned="v1/"):
+def FXA_GET(api, versioned="v1/"):
     url = BASEURL+versioned+api
+    return GET(url)
+
+def POST(url, body={}, new_headers={}):
     headers = {"content-type": "application/json"}
     headers.update(new_headers)
     print "POST", url, headers
@@ -112,6 +114,10 @@ def POST(api, body={}, new_headers={}, versioned="v1/"):
     if r.status_code != 200:
         raise WebError(r)
     return r.json()
+
+def FXA_POST(api, body={}, new_headers={}, versioned="v1/"):
+    url = BASEURL+versioned+api
+    return POST(url, body, new_headers)
 
 from hawk import client as hawk_client
 
@@ -210,10 +216,10 @@ def processChangePasswordToken(changePasswordToken):
 def changePassword(emailUTF8, oldPassword, newPassword):
     oldAuthPW, oldunwrapBKey = stretch(emailUTF8, oldPassword)
     newAuthPW, newunwrapBKey = stretch(emailUTF8, newPassword)
-    r = POST("password/change/start",
-             {"email": emailUTF8,
-              "oldAuthPW": oldAuthPW.encode("hex"),
-              })
+    r = FXA_POST("password/change/start",
+                 {"email": emailUTF8,
+                  "oldAuthPW": oldAuthPW.encode("hex"),
+                  })
     print r
     keyFetchToken = r["keyFetchToken"].decode("hex")
     passwordChangeToken = r["passwordChangeToken"].decode("hex")

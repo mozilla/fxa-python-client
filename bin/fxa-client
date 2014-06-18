@@ -4,7 +4,7 @@ import os, urlparse, argparse # argparse requires py2.7/py3.2
 import time
 from fxa_client import fxa_crypto
 from fxa_client.fxa_crypto import (
-    GET, printhex, binary_type, POST, resendForgotPassword,
+    FXA_GET, printhex, binary_type, FXA_POST, resendForgotPassword,
     stretch, verifyForgotPassword, HKDF, KW, split,
     HAWK_POST, getRestmailVerifyUrl, RESTMAILURL,
     verifyUrl, changePassword, getEmailStatus,
@@ -15,7 +15,7 @@ class UnknownCommand(Exception):
     pass
 
 def command(args):
-    GET("__heartbeat__", versioned="")
+    FXA_GET("__heartbeat__", versioned="")
     command = args.command
 
     # emailUTF8 and passwordUTF8 are provided with --email and --password,
@@ -54,8 +54,8 @@ def command(args):
     assert isinstance(emailUTF8, binary_type)
 
     if command == "forgotpw-send":
-        r = POST("password/forgot/send_code",
-                 {"email": emailUTF8})
+        r = FXA_POST("password/forgot/send_code",
+                     {"email": emailUTF8})
         print r
         passwordForgotToken = r["passwordForgotToken"]
         return
@@ -100,21 +100,21 @@ def command(args):
     authPW, unwrapBKey = stretch(emailUTF8, passwordUTF8)
 
     if command == "create":
-        r = POST("account/create",
-                 {"email": emailUTF8,
-                  "authPW": authPW.encode("hex")},
-                 {"accept-language": acceptLang}
-                 )
+        r = FXA_POST("account/create",
+                     {"email": emailUTF8,
+                      "authPW": authPW.encode("hex")},
+                     {"accept-language": acceptLang}
+                     )
         print r
         print "Now use the 'curl' command from the server logs to verify"
         print "Or if you used restmail.net use the verify command"
         return
 
     if command == "destroy":
-        r = POST("account/destroy",
-                 {"email": emailUTF8,
-                  "authPW": authPW.encode("hex"),
-                  })
+        r = FXA_POST("account/destroy",
+                     {"email": emailUTF8,
+                      "authPW": authPW.encode("hex"),
+                      })
         print r
         return
 
@@ -124,10 +124,10 @@ def command(args):
     assert command in ("login", "login-with-keys")
     getKeys = bool(command == "login-with-keys")
 
-    r = POST("account/login?keys=true" if getKeys else "account/login",
-             {"email": emailUTF8,
-              "authPW": authPW.encode("hex"),
-              })
+    r = FXA_POST("account/login?keys=true" if getKeys else "account/login",
+                 {"email": emailUTF8,
+                  "authPW": authPW.encode("hex"),
+                  })
     uid = str(r["uid"])
     sessionToken = r["sessionToken"].decode("hex")
     printhex("sessionToken", sessionToken)
