@@ -25,6 +25,7 @@ BASEURL = "https://api.accounts.firefox.com/"
 if os.getenv("PUBLIC_URL"):
     BASEURL = os.getenv("PUBLIC_URL")
     assert BASEURL.endswith("/")
+OAUTHURL = os.getenv("OAUTHURL")
 
 HOST = urlparse.urlparse(BASEURL)[1]
 if HOST.split(":")[0] == "localhost":
@@ -324,3 +325,32 @@ def verifyForgotPassword(passwordForgotToken, code):
     r = HAWK_POST("password/forgot/verify_code", tokenID, reqHMACkey,
                   {"code": code})
     return r["accountResetToken"].decode("hex")
+
+All = object()
+def getOAuthToken(assertion, client_id, client_secret, scopes=All):
+    if scopes is not All:
+        # fxa-oauth-server doesn't implement scopes yet
+        raise NotImplementedError("scopes not implemented yet")
+    assert OAUTHURL.endswith("/")
+    r = POST(OAUTHURL + "v1/authorization",
+             {"client_id": client_id,
+              "assertion": assertion,
+              "state": "fxa-python-client-fakestate",
+              # omit redirect_uri
+              # omit scope
+              })
+    code = r["code"]
+    print "OAuth code is:", code
+    r = POST(OAUTHURL + "v1/token",
+             {"client_id": client_id,
+              "client_secret": client_secret,
+              "code": code})
+    token = r["access_token"]
+    print "OAuth token is:", token
+    assert r["token_type"] == "bearer"
+    #print "scopes:", r["scopes"]
+    r = POST(OAUTHURL + "v1/verify",
+             {"token": token})
+    print " user:", r["user"]
+    print " scopes:", r["scopes"]
+    return token
