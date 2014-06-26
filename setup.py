@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from distutils.core import setup
+from setuptools import setup
 
 setup(
     name = "fxa-python-client",
@@ -9,6 +9,7 @@ setup(
     author = "Brian Warner",
     author_email = "warner-fxa-python-client@lothar.com",
     url = "https://github.com/mozilla/fxa-python-client",
+    install_requires = ['cryptography', 'pyhawk'],
     packages = ["fxa_client"],
     scripts = ["bin/fxa-client", "bin/fxa-vectors"],
     classifiers=[
