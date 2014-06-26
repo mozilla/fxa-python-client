@@ -39,11 +39,11 @@ ve:
 .PHONY: deps
 deps: .deps
 
-install: ve .deps
-	ve/bin/python setup.py install
+develop: ve .deps
+	ve/bin/python setup.py develop
 
 vectors: .deps
-	ve/bin/python picl-crypto.py
+	ve/bin/fxa-vectors
 
 .PHONY: clean
 clean:
