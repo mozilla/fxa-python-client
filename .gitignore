@@ -36,3 +36,5 @@ nosetests.xml
 /.deps
 /.help-deps
 /ve/
+/.help-setup
+/.setup

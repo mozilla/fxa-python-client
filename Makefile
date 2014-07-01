@@ -1,50 +1,53 @@
 
-help: .help-deps
-	@echo "COMMAND=./ve/bin/fxa-client --email EMAIL@restmail.net --password pw"
+help: .help-setup
+	@echo "run ./ve/bin/fxa-client repl"
+	@echo " starts an interactive shell"
+	@echo " (uses random restmail.net email+password)"
+	@echo " (add --email EMAIL and --password PW to override)"
+	@echo
 	@echo "FxA account creation:"
-	@echo " \$$COMMAND create"
+	@echo " > create"
 	@echo "  then for restmail.net accounts, use:"
-	@echo "   \$$COMMAND verify"
+	@echo " > verify"
 	@echo "  or for non-restmail account, extract and load verification URL from server logs"
 	@echo
 	@echo "FxA account usage:"
-	@echo "  \$$COMMAND login"
-	@echo "  \$$COMMAND login-with-keys"
+	@echo "  > login"
+	@echo "  > login-with-keys"
 	@echo " change-password:"
-	@echo "  \$$COMMAND change-password newpw"
+	@echo "  > change-password newpw"
 	@echo " forgot-password:"
-	@echo "  \$$COMMAND forgotpw-send"
+	@echo "  > forgotpw-send"
 	@echo "   then for restmail.net accounts, use:"
-	@echo "    \$$COMMAND get-token-code"
-	@echo "  \$$COMMAND forgotpw-resend token"
-	@echo "  \$$COMMAND forgotpw-submit token code"
-
+	@echo "    > get-token-code"
+	@echo "  > forgotpw-resend token"
+	@echo "  > forgotpw-submit token code"
 	@echo " destroy-account:"
-	@echo "  \$$COMMAND destroy"
+	@echo "  > destroy"
+	@echo
+	@echo "All commands can be run directly, e.g."
+	@echo " ./ve/bin/fxa-client --email EMAIL --password PW create"
 
 ve:
 	virtualenv ve
 
-.help-deps:
-	@echo "run: make ve deps install, then:"
-
-.deps: ve
-	ve/bin/pip install scrypt
-	ve/bin/pip install requests
-	ve/bin/pip install PyHawk
-	ve/bin/pip install argparse
-	ve/bin/pip install cryptography
-	ve/bin/pip install PyBrowserID
-	touch .deps .help-deps
-.PHONY: deps
-deps: .deps
-
-develop: ve .deps
+# scrypt-0.6.1 has some sort of installation bug: if it gets installed as an
+# install_requires= dependency, the _scrypt.so file doesn't get installed,
+# and it can't be imported. If we install it with pip, it works.
+.setup: ve
 	ve/bin/python setup.py develop
+	ve/bin/pip install scrypt
+	touch .setup .help-setup
 
-vectors: .deps
+.help-setup:
+	@echo "run: make setup, then:"
+
+vectors: .setup
 	ve/bin/fxa-vectors
 
-.PHONY: clean
+.PHONY: setup clean run
+setup: .setup
+run: .setup
+	ve/bin/fxa-client repl
 clean:
-	rm -rf ve .deps .help-deps
+	rm -rf ve .setup .help-setup
