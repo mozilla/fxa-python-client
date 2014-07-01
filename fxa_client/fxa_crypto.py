@@ -9,9 +9,8 @@ import binascii
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import rsa, padding
 from cryptography.hazmat.backends import openssl
+from six import binary_type, print_, int2byte, b
 
-from . import six
-from .six import binary_type, print_, int2byte
 from .hkdf import HKDF
 
 # PyPI has four candidates for PBKDF2 functionality. We use "simple-pbkdf2"
@@ -62,9 +61,9 @@ def split(value):
     assert len(value)%32 == 0
     return [value[i:i+32] for i in range(0, len(value), 32)]
 def KW(name):
-    return b"identity.mozilla.com/picl/v1/" + six.b(name)
+    return b"identity.mozilla.com/picl/v1/" + b(name)
 def KWE(name, emailUTF8):
-    return b"identity.mozilla.com/picl/v1/" + six.b(name) + b":" + emailUTF8
+    return b"identity.mozilla.com/picl/v1/" + b(name) + b":" + emailUTF8
 
 def xor(s1, s2):
     assert isinstance(s1, binary_type), type(s1)
