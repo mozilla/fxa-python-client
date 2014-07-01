@@ -4,7 +4,7 @@ from setuptools import setup
 
 setup(
     name = "fxa-python-client",
-    version = "0",
+    version = "1.0.0",
     description = "python sample code to access Firefox Account (FxA) APIs",
     author = "Brian Warner",
     author_email = "warner-fxa-python-client@lothar.com",
