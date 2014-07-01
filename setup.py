@@ -18,7 +18,7 @@ setup(
                         "six",
                         ],
     packages = ["fxa_client"],
-    scripts = ["bin/fxa-client", "bin/fxa-vectors"],
+    scripts = ["bin/fxa-client"],
     classifiers=[
         "Programming Language :: Python",
         "Programming Language :: Python :: 2",
