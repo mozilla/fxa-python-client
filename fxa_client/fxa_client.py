@@ -2,8 +2,8 @@
 
 import os, urlparse, argparse # argparse requires py2.7/py3.2
 import time
-from fxa_client import fxa_crypto
-from fxa_client.fxa_crypto import (
+import fxa_crypto
+from fxa_crypto import (
     FXA_GET, printhex, binary_type, FXA_POST, resendForgotPassword,
     stretch, verifyForgotPassword, HKDF, KW, split,
     HAWK_POST, getRestmailVerifyUrl, RESTMAILURL,
@@ -14,7 +14,7 @@ from fxa_client.fxa_crypto import (
 class UnknownCommand(Exception):
     pass
 
-def command(args):
+def command(args, emailUTF8, passwordUTF8, acceptLang):
     FXA_GET("__heartbeat__", versioned="")
     command = args.command
 
@@ -182,7 +182,7 @@ parser.add_argument("-l", "--lang", help="accept-language header value")
 parser.add_argument("command", help="one of: repl, create, login[-with-keys], destroy, change-password, forgotpw-send, forgotpw-resend, forgotpw-submit, verify, get-token-code")
 parser.add_argument("args", nargs=argparse.REMAINDER)
 
-if __name__ == '__main__':
+def main():
     args = parser.parse_args()
     emailUTF8 = args.email or "fxa-%s@restmail.net" % os.urandom(6).encode("hex")
     passwordUTF8 = args.password or os.urandom(2).encode("hex")
@@ -207,14 +207,18 @@ if __name__ == '__main__':
                 if args.command == "quit":
                     break
                 try:
-                    command(args)
+                    command(args, emailUTF8, passwordUTF8, acceptLang)
                 except UnknownCommand as e:
                     print e
                     linep.print_help()
         print "To access this account later, use this command:"
         print "fxa-client --email %s --password %s" % (emailUTF8, passwordUTF8)
     else:
-        command(args)
+        command(args, emailUTF8, passwordUTF8, acceptLang)
+
+
+if __name__ == '__main__':
+    main()
 
 # exercised:
 #  account/create

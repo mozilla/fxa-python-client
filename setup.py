@@ -18,7 +18,6 @@ setup(
                         "six",
                         ],
     packages = ["fxa_client"],
-    scripts = ["bin/fxa-client"],
     classifiers=[
         "Programming Language :: Python",
         "Programming Language :: Python :: 2",
@@ -28,4 +27,6 @@ setup(
         "Programming Language :: Python :: 3.2",
         "Programming Language :: Python :: 3.3",
         ],
-    )
+    entry_points = {"console_scripts":
+                    ["fxa-client = fxa_client.fxa_client:main"]},
+)
