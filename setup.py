@@ -27,8 +27,6 @@ setup(
         "Programming Language :: Python :: 3.2",
         "Programming Language :: Python :: 3.3",
         ],
-    entry_points = """
-    [console_scripts]
-    fxa-client = fxa_client.fxa_client:main
-    """
-    )
+    entry_points = {"console_scripts":
+                    ["fxa-client = fxa_client.fxa_client:main"]},
+)
