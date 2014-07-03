@@ -14,7 +14,7 @@ from fxa_crypto import (
 class UnknownCommand(Exception):
     pass
 
-def command(args):
+def command(args, emailUTF8, passwordUTF8, acceptLang):
     FXA_GET("__heartbeat__", versioned="")
     command = args.command
 
@@ -207,14 +207,14 @@ def main():
                 if args.command == "quit":
                     break
                 try:
-                    command(args)
+                    command(args, emailUTF8, passwordUTF8, acceptLang)
                 except UnknownCommand as e:
                     print e
                     linep.print_help()
         print "To access this account later, use this command:"
         print "fxa-client --email %s --password %s" % (emailUTF8, passwordUTF8)
     else:
-        command(args)
+        command(args, emailUTF8, passwordUTF8, acceptLang)
 
 
 if __name__ == '__main__':
