@@ -82,6 +82,8 @@ def command(args, emailUTF8, passwordUTF8, acceptLang):
 
     if command == "verify":
         verify_url = getRestmailVerifyUrl(os.path.join(RESTMAILURL, emailUTF8))
+        if not verify_url:
+            return
         print 'Verify URL: ', verify_url
         r = verifyUrl(verify_url)
         assert r.code == 200
@@ -90,6 +92,8 @@ def command(args, emailUTF8, passwordUTF8, acceptLang):
 
     if command == "get-token-code":
         forgot_url = getRestmailVerifyUrl(os.path.join(RESTMAILURL, emailUTF8))
+        if not forgot_url:
+            return
         token_code = urlparse.parse_qs(urlparse.urlparse(forgot_url).query)
         print token_code['token'][0], token_code['code'][0]
         return

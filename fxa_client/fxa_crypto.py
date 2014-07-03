@@ -74,7 +74,10 @@ def xor(s1, s2):
 def getRestmailVerifyUrl(url):
     restmail_str = urllib2.urlopen(url).read()
     restmail_dict = json.loads(restmail_str)
-    assert len(restmail_dict)
+    if not restmail_dict:
+        print "restmail error"
+        print restmail_dict
+        return None
     return restmail_dict[-1]['headers']['x-link']
 
 def verifyUrl(url):
