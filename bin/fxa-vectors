@@ -30,9 +30,12 @@ from fxa_client.pbkdf2 import pbkdf2_bin
 
 def HMAC(key, msg):
     return hmac.new(key, msg, sha256).digest()
+
+
 def printheader(name):
     print_("### %s" % name)
     print_()
+
 
 def printhex(name, value, groups_per_line=1):
     #print_("%s:" % name)
@@ -54,13 +57,19 @@ def printhex(name, value, groups_per_line=1):
         print_(line)
     print_()
 
+
 def split(value):
     assert len(value)%32 == 0
     return [value[i:i+32] for i in range(0, len(value), 32)]
+
+
 def KW(name):
     return b"identity.mozilla.com/picl/v1/" + b(name)
+
+
 def KWE(name, emailUTF8):
     return b"identity.mozilla.com/picl/v1/" + b(name) + b":" + emailUTF8
+
 
 def xor(s1, s2):
     assert isinstance(s1, binary_type), type(s1)
@@ -68,8 +77,10 @@ def xor(s1, s2):
     assert len(s1) == len(s2)
     return b"".join([int2byte(ord(s1[i:i+1])^ord(s2[i:i+1])) for i in range(len(s1))])
 
+
 def fakeKey(start):
     return b"".join([int2byte(c) for c in range(start, start+32)])
+
 
 def main():
     printheader("client stretch-KDF")
@@ -166,6 +177,7 @@ def main():
         printhex("sessionToken", sessionToken)
         printhex("tokenID (sessionToken)", tokenID)
         printhex("reqHMACkey", reqHMACkey)
+
 
 if __name__ == "__main__":
     main()
