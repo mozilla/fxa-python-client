@@ -86,4 +86,3 @@ $COMMAND --email sv$epoch@restmail.net --lang sv destroy &> /dev/null
 $COMMAND --email tr$epoch@restmail.net --lang tr destroy &> /dev/null
 $COMMAND --email zh-CN$epoch@restmail.net --lang zh-CN destroy &> /dev/null
 $COMMAND --email zh-TW$epoch@restmail.net --lang zh-TW destroy &> /dev/null
-

@@ -28,7 +28,7 @@ $COMMAND --password 12345678 login
 echo '>>>>>>>>sleep '$PRELIMIT' seconds'
 sleep $PRELIMIT
 echo '>>>>>>>>Expect Fail'
-$COMMAND --password 12345678 login 
+$COMMAND --password 12345678 login
 echo '>>>>>>>>sleep '$DELAYLIMIT' seconds'
 sleep $DELAYLIMIT
 echo '>>>>>>>>Expect Fail'
