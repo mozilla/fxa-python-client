@@ -9,8 +9,7 @@ setup(
     author = "Brian Warner",
     author_email = "warner-fxa-python-client@lothar.com",
     url = "https://github.com/mozilla/fxa-python-client",
-    install_requires = ["argparse",
-                        "cryptography",
+    install_requires = ["cryptography",
                         "requests",
                         "PyBrowserID",
                         "PyHawk",
@@ -21,7 +20,6 @@ setup(
     classifiers=[
         "Programming Language :: Python",
         "Programming Language :: Python :: 2",
-        "Programming Language :: Python :: 2.6",
         "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.2",
