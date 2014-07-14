@@ -71,7 +71,7 @@ def xor(s1, s2):
 def fakeKey(start):
     return b"".join([int2byte(c) for c in range(start, start+32)])
 
-if 1:
+def main():
     printheader("client stretch-KDF")
     emailUTF8 = u"andré@example.org".encode("utf-8")
     passwordUTF8 = u"pässwörd".encode("utf-8")
@@ -166,3 +166,6 @@ if 1:
         printhex("sessionToken", sessionToken)
         printhex("tokenID (sessionToken)", tokenID)
         printhex("reqHMACkey", reqHMACkey)
+
+if __name__ == "__main__":
+    main()
