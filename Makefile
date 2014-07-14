@@ -39,7 +39,7 @@ ve:
 	@echo "run: make setup, then:"
 
 vectors: .setup
-	ve/bin/python bin/fxa-vectors
+	ve/bin/fxa-vectors
 
 .PHONY: setup clean run
 
