@@ -4,7 +4,7 @@
 
 from hashlib import sha256
 import hmac
-from fxa_client.hkdf import HKDF
+from .hkdf import HKDF
 import itertools, binascii, time, sys
 from six import binary_type, print_, int2byte, b
 
@@ -16,7 +16,7 @@ import scrypt
 # by Armin Ronacher: https://pypi.python.org/pypi/simple-pbkdf2/1.0 . Note
 # that v1.0 has a bug which causes segfaults when num_iterations is greater
 # than about 88k.
-from fxa_client.pbkdf2 import pbkdf2_bin
+from .pbkdf2 import pbkdf2_bin
 
 # other options:
 # * https://pypi.python.org/pypi/PBKDF/1.0

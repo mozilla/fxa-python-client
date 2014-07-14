@@ -26,5 +26,7 @@ setup(
         "Programming Language :: Python :: 3.3",
         ],
     entry_points = {"console_scripts":
-                    ["fxa-client = fxa_client.fxa_client:main"]},
+                    ["fxa-client = fxa_client.fxa_client:main",
+                     "fxa-vectors = fxa_client.fxa_vectors:main"
+                     ]},
 )
