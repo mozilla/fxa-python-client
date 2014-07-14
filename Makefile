@@ -42,8 +42,11 @@ vectors: .setup
 	ve/bin/python bin/fxa-vectors
 
 .PHONY: setup clean run
+
 setup: .setup
+
 run: .setup
 	ve/bin/fxa-client repl
+
 clean:
 	rm -rf ve .setup .help-setup
