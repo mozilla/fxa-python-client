@@ -31,13 +31,8 @@ help: .help-setup
 ve:
 	virtualenv ve
 
-# scrypt-0.6.1 has some sort of installation bug: if it gets installed as an
-# install_requires= dependency, the _scrypt.so file doesn't get installed,
-# and it can't be imported. If we install it with pip, it works. Note that
-# scrypt is only needed for fxa-vectors (not fxa-client).
 .setup: ve
 	ve/bin/python setup.py develop
-	ve/bin/pip install scrypt
 	touch .setup .help-setup
 
 .help-setup:
