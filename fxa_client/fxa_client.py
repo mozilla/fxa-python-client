@@ -81,9 +81,23 @@ def command(args, emailUTF8, passwordUTF8, acceptLang):
         return
 
     if command == "verify":
-        verify_url = getRestmailVerifyUrl(os.path.join(RESTMAILURL, emailUTF8))
-        if not verify_url:
-            return
+        verify_url = None
+        retry_count = 10
+
+        inbox_url = urlparse.urljoin(RESTMAILURL, emailUTF8)
+        while True:
+            verify_url = getRestmailVerifyUrl(inbox_url)
+            if verify_url:
+                break;
+
+            # If email with verification code hasn't been arrived yet,
+            # retry retrieving the email a couple of times
+            time.sleep(1)
+            retry_count -= 1
+
+            if retry_count == 0:
+                return
+
         print 'Verify URL: ', verify_url
         r = verifyUrl(verify_url)
         assert r.code == 200
@@ -91,7 +105,7 @@ def command(args, emailUTF8, passwordUTF8, acceptLang):
         return
 
     if command == "get-token-code":
-        forgot_url = getRestmailVerifyUrl(os.path.join(RESTMAILURL, emailUTF8))
+        forgot_url = getRestmailVerifyUrl(urlparse.urljoin(RESTMAILURL, emailUTF8))
         if not forgot_url:
             return
         token_code = urlparse.parse_qs(urlparse.urlparse(forgot_url).query)

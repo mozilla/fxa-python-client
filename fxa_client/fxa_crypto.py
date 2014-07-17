@@ -48,6 +48,7 @@ def printhex(name, value, groups_per_line=1):
     for line in lines:
         print_(line)
     print_()
+
 def printdec(name, n):
     print_(name+" (base 10):")
     s = str(n)
@@ -60,8 +61,10 @@ def printdec(name, n):
 def split(value):
     assert len(value)%32 == 0
     return [value[i:i+32] for i in range(0, len(value), 32)]
+
 def KW(name):
     return b"identity.mozilla.com/picl/v1/" + b(name)
+
 def KWE(name, emailUTF8):
     return b"identity.mozilla.com/picl/v1/" + b(name) + b":" + emailUTF8
 
@@ -75,8 +78,7 @@ def getRestmailVerifyUrl(url):
     restmail_str = urllib2.urlopen(url).read()
     restmail_dict = json.loads(restmail_str)
     if not restmail_dict:
-        print "restmail error"
-        print restmail_dict
+        print 'Invalid response from Restmail: %s' % restmail_dict
         return None
     return restmail_dict[-1]['headers']['x-link']
 
@@ -85,7 +87,7 @@ def verifyUrl(url):
     qs_dict = urlparse.parse_qs(qs)
 
     data = urllib.urlencode({"uid":qs_dict['uid'][0], "code":qs_dict['code'][0]})
-    req = urllib2.Request(os.path.join(BASEURL, "v1/recovery_email/verify_code"),
+    req = urllib2.Request(urlparse.urljoin(BASEURL, "v1/recovery_email/verify_code"),
                           data)
     return urllib2.urlopen(req)
 
