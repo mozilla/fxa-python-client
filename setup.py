@@ -9,24 +9,24 @@ setup(
     author = "Brian Warner",
     author_email = "warner-fxa-python-client@lothar.com",
     url = "https://github.com/mozilla/fxa-python-client",
-    install_requires = ["argparse",
-                        "cryptography",
+    install_requires = ["cryptography",
                         "requests",
                         "PyBrowserID",
                         "PyHawk",
-                        # "scrypt", # must install this with pip directly
+                        "scrypt",
                         "six",
                         ],
     packages = ["fxa_client"],
     classifiers=[
         "Programming Language :: Python",
         "Programming Language :: Python :: 2",
-        "Programming Language :: Python :: 2.6",
         "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.2",
         "Programming Language :: Python :: 3.3",
         ],
     entry_points = {"console_scripts":
-                    ["fxa-client = fxa_client.fxa_client:main"]},
+                    ["fxa-client = fxa_client.fxa_client:main",
+                     "fxa-vectors = fxa_client.fxa_vectors:main"
+                     ]},
 )

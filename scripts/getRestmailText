@@ -20,6 +20,5 @@ def getText(url):
     print 'deleted email'
 
 # lang@restmail.net
-email = sys.argv[1] 
+email = sys.argv[1]
 getText(os.path.join(BASEURL,email))
-
