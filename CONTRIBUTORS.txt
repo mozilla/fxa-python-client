@@ -1,0 +1,7 @@
+List of contributors:
+
+* Brian Warner <warner-github@lothar.com>
+* Henrik Skupin <mail@hskupin.info>
+* Edwin Wong <edwong@mozilla.com>
+* Cosmin Malutan <cosmin.malutan@softvision.ro>
+* Ryan Kelly <rfkelly@mozilla.com>
