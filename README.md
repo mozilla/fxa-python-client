@@ -32,3 +32,8 @@ sudo apt-get install build-essential libssl-dev libffi-dev python-dev
 
 The source tree also contains a tool to create test vectors for the FxA auth
 protocol.
+For that you'll need an additional python package which needs to be installed
+manually:
+```bash
+pip install -r requirements.txt
+```
