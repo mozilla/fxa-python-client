@@ -15,7 +15,6 @@ setup(
                         "requests",
                         "PyBrowserID",
                         "PyHawk",
-                        "scrypt",
                         "six",
                         ],
     packages = ["fxa_client"],
