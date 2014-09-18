@@ -10,7 +10,15 @@ from six import binary_type, print_, int2byte, b
 
 # get scrypt-0.6.1 from PyPI, run this with it in your PYTHONPATH
 # https://pypi.python.org/pypi/scrypt/0.6.1
-import scrypt
+try:
+    import scrypt
+except ImportError:
+    raise ImportError("""
+      Generating test vectors requires the 'scrypt' module.
+      Try installing it like so:
+
+          ./ve/bin/pip install -r requirements.txt
+    """)
 
 # PyPI has four candidates for PBKDF2 functionality. We use "simple-pbkdf2"
 # by Armin Ronacher: https://pypi.python.org/pypi/simple-pbkdf2/1.0 . Note
